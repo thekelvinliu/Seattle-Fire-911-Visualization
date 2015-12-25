@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 import time
-from classes import ApiPoller
+from WebApp.classes import ApiPoller
 
 def main():
     ap = ApiPoller("https://data.seattle.gov/resource/grwu-wqtk.json",
