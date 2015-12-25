@@ -90,8 +90,10 @@ class ApiPoller(Thread):
             start_dt = self.updated
         #convert to string
         dt_string = start_dt.strftime("%Y-%m-%dT%H:%M:%S.%f")
+        rn = dt.datetime.now(self.tz).strftime("%Y-%m-%dT%H:%M:%S.%f")
         #add constriants
-        ret["$where"] = "{} >= '{}'".format(self.dt_field, dt_string)
+        ret["$where"] = "{} between '{}' and '{}'".format(self.dt_field,
+                                                          dt_string, rn)
         ret["$order"] = "{} ASC".format(self.dt_field)
         return ret
 
