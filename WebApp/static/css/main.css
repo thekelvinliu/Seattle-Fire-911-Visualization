@@ -1,23 +1,46 @@
 html, body {
+  font-family: 'Raleway', 'Helvetica', sans-serif;
   height: 100%;
   margin: 0;
   padding: 0;
 }
+
+.centered {
+  text-align: center;
+}
+
+.row {
+  margin: 1rem 1rem 1rem 1rem;
+  padding: .5rem .5rem .5rem .5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+#top {
+  display: none;
+}
+
 #map {
   height: 50%;
   width: 100%;
 }
+
 #info {
   height: 50%;
   width: 100%;
+  background-color: rgba(244, 179, 80, 1);
+  overflow-y: scroll;
 }
 
-@media (min-width: 550px) {
+@media (min-width: 750px) {
   #map {
     height: 100%;
     float: left;
     width: 67%;
   }
+
   #info {
     height: 100%;
     float: right;

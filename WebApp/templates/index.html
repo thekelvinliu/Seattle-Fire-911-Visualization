@@ -10,20 +10,22 @@
     <!-- ICON -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/fire.png') }}">
     <!-- CSS -->
-    <!-- <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css"> -->
-    <!-- <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"> -->
-    <!-- <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway:400,300,600"> -->
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway:400,300,600">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     <!-- JS -->
     <script type="text/javascript">
       var last_updated = '{{ lu }}';
       var data = {{ d|tojson }};
     </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/map.js') }}"></script>
     <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyDM_DiCCOBmfzR9htAwJlFUuB16kTI8mJs&callback=initMap" async defer></script>
   </head>
   <body>
     <div id="map"></div>
-    <div id="info">Seattle Fire 911 Visualization</div>
+    <div id="info">
+      <h3 class="centered">Seattle Fire 911 Visualization</h3>
+      <div id="top" class="row"></div>
+    </div>
   </body>
 </html>
