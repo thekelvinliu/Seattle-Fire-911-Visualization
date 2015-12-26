@@ -1,0 +1,26 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#map {
+  height: 50%;
+  width: 100%;
+}
+#info {
+  height: 50%;
+  width: 100%;
+}
+
+@media (min-width: 550px) {
+  #map {
+    height: 100%;
+    float: left;
+    width: 67%;
+  }
+  #info {
+    height: 100%;
+    float: right;
+    width: 33%;
+  }
+}
