@@ -53,6 +53,7 @@ class ApiPoller(Thread):
         print r.url
         #save response
         self.data = r.json()
+        self.new_data = list()
         #add identifiers
         self.uids = set()
         #use given uid field
@@ -70,6 +71,15 @@ class ApiPoller(Thread):
         self.daemon = True
         self.keep_going = True
         self.start()
+
+    def get_new_data(self):
+        """Returns a list of new data.
+
+        Returns:
+            A list containing data from self.new_data
+        """
+        l = len(self.new_data)
+        return [self.new_data.pop() for i in range(l)]
 
     def create_payload(self, initial=False):
         """Creates a payload for the API request based on self.updated.
@@ -120,6 +130,7 @@ class ApiPoller(Thread):
                         print "adding uid", d[self.uid_field]
                         self.uids.add(d[self.uid_field])
                         self.data.append(d)
+                        self.new_data.append(d)
             else:
                 for d in tmp_data:
                     uid = dt.datetime.strptime(d[self.dt_field],
@@ -129,6 +140,7 @@ class ApiPoller(Thread):
                         print "adding uid", uid
                         self.uids.add(uid)
                         self.data.append(d)
+                        self.new_data.append(d)
             #adjust self.updated to reflect new time
             self.updated = tmp_time
 
