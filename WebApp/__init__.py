@@ -16,7 +16,6 @@ def index():
 
 @app.route('/refresh')
 def refresh():
-    print "sending new data"
     return json.dumps(poller.get_new_data())
 
 @app.errorhandler(404)
