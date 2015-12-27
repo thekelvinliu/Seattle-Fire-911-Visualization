@@ -44,20 +44,20 @@ img {
 #info {
   height: 50%;
   width: 100%;
-  background-color: rgba(244, 179, 80, 1);
+  background-color: rgba(253, 227, 167, 1);
   overflow-y: scroll;
 }
 
 @media (min-width: 750px) {
   #map {
     height: 100%;
-    float: right;
+    float: left;
     width: 67%;
   }
 
   #info {
     height: 100%;
-    float: left;
+    float: right;
     width: 33%;
   }
 }
