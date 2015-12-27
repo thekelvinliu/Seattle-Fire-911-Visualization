@@ -17,8 +17,8 @@
       var last_updated = '{{ lu }}';
       var data = {{ d|tojson }};
     </script>
+    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyDM_DiCCOBmfzR9htAwJlFUuB16kTI8mJs" defer></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyDM_DiCCOBmfzR9htAwJlFUuB16kTI8mJs&callback=initMap" async defer></script>
   </head>
   <body>
     <div id="map"></div>

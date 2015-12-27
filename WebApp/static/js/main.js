@@ -137,6 +137,8 @@ function clearMarkers() {
     }
 }
 
+//create the map!
+initMap();
 //drop the markers!
 drop(data);
 //send get request to retrieve new data on an interval

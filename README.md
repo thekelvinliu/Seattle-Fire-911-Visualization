@@ -35,3 +35,5 @@ $ ./runserver.py
 
 ## Notes
 This project is for the Nordstrom Technology Internship 2016.
+Known to work on very recent versions of Chrome and Firefox.
+Mobile and safari support is iffy 😁.
