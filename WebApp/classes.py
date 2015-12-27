@@ -78,8 +78,9 @@ class ApiPoller(Thread):
         Returns:
             A list containing data from self.new_data
         """
-        l = len(self.new_data)
-        return [self.new_data.pop() for i in range(l)]
+        ret = [d for d in self.new_data]
+        del self.new_data[:]
+        return ret
 
     def create_payload(self, initial=False):
         """Creates a payload for the API request based on self.updated.
