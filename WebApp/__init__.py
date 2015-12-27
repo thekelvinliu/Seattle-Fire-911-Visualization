@@ -7,7 +7,7 @@ from WebApp.classes import ApiPoller
 
 app = Flask(__name__)
 poller = ApiPoller("https://data.seattle.gov/resource/grwu-wqtk.json",
-                   init_load=12,
+                   init_load=24,
                    uid_field="incident_number")
 
 @app.route('/')
@@ -16,6 +16,7 @@ def index():
 
 @app.route('/refresh')
 def refresh():
+    print "sending new data"
     return json.dumps(poller.get_new_data())
 
 @app.errorhandler(404)

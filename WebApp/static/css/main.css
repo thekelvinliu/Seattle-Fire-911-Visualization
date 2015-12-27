@@ -5,6 +5,10 @@ html, body {
   padding: 0;
 }
 
+img {
+  vertical-align: text-top;
+}
+
 .centered {
   text-align: center;
 }
@@ -12,6 +16,16 @@ html, body {
 .row {
   margin: 1rem 1rem 1rem 1rem;
   padding: .5rem .5rem .5rem .5rem;
+  display: table;
+  width: 100%;
+}
+
+.col {
+  margin: 1rem;
+  float: left;
+  overflow: auto;
+  width: auto;
+  max-width: 30%;
 }
 
 .hidden {
