@@ -1,27 +1,40 @@
+// main.js - sets up the visualization's map and other useful functions
+
+// GLOBALS
+var lastUpdate;
+var map;
+var markers = [];
+var openWindow = null;
+var selectedDiv = null;
+var picker = new Pikaday(
+{
+    field: document.getElementById('custom'),
+    format: 'MM/DD/YYYY',
+    minDate: moment("2000-01-01").toDate(),
+    maxDate: moment().subtract(1, 'days').toDate()
+});
+
+// FUNCTIONS
 //insert a newNode after targetNode as a sibling -- thanks stackoverflow
 function insertAfter(newNode, targetNode) {
     var p = targetNode.parentNode;
-    if (p.lastchild == targetNode) {
+    if (p.lastchild === targetNode) {
         p.appendChild(newNode);
     } else {
         p.insertBefore(newNode, targetNode.nextsibling);
     }
 }
 
-var map;
-var markers = [];
-var openWindow = null;
-var selectedDiv = null;
-
-//initialize map
+//initialize map must be called before anything is added to the map!
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
+    //approx seattle city center
     center: {lat: 47.6044446, lng: -122.3491773},
     zoom: 12
   });
 }
 
-//put markers onto map
+//put data points in arr on the map
 function drop(arr) {
     for (var i = 0; i < arr.length; i++) {
         addMarkerWithTimeout(arr[i], i*250);
@@ -81,7 +94,7 @@ function addMarkerWithTimeout(obj, timeout) {
         imgDiv.className = 'col';
         var img = document.createElement('img');
         img.src = imgPath;
-        img.style.height = "60px";
+        img.style.height = '60px';
         imgDiv.appendChild(img);
         rowDiv.appendChild(imgDiv);
         //create timeDiv
@@ -135,8 +148,23 @@ function clearMarkers() {
     while (markers.length > 0) {
         markers.pop().setMap(null);
     }
+    openWindow = null;
+    selectedDiv = null;
 }
 
+//retrieve fresh data from seattle open data using user-supplied start date (default is yesterday)
+function getData() {
+    var userSelection = document.querySelector('input[name="startdate"]:checked').id;
+    switch (userSelection) {
+        case 'other':
+            alert(document.getElementById('custom').value);
+            break;
+        default:
+            alert(userSelection);
+    }
+}
+
+// MAIN
 //create the map!
 initMap();
 //drop the markers!

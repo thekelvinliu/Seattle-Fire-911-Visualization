@@ -13,11 +13,22 @@ img {
   text-align: center;
 }
 
+.half-size {
+  width: 49%;
+}
+
+div.left {
+  float: left;
+}
+
+div.right {
+  float: right;
+}
+
 .row {
-  padding: .5rem .5rem .5rem .5rem;
+  padding: .5rem 0;
   display: table;
   width: 100%;
-  con
 }
 
 .col {
@@ -36,6 +47,20 @@ img {
   display: none;
 }
 
+#controls {
+  padding-top: 0;
+}
+
+#incidents {
+  font-size: 2.5rem;
+  color: rgba(249, 105, 14, 1);
+  font-weight: 600;
+}
+
+#custom {
+  max-width: 75px;
+}
+
 #map {
   height: 50%;
   width: 100%;
@@ -48,16 +73,30 @@ img {
   overflow-y: scroll;
 }
 
-@media (min-width: 750px) {
+#summ {
+  text-align: right;
+}
+
+#visualize {
+  width: 35%;
+}
+
+@media (min-width: 800px) {
   #map {
     height: 100%;
-    float: right;
     width: 67%;
   }
 
   #info {
     height: 100%;
-    float: left;
     width: 33%;
+  }
+
+  #summ {
+    text-align: center;
+  }
+
+  #visualize {
+    width: 80%;
   }
 }
