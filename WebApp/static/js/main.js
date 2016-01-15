@@ -9,7 +9,7 @@ var selectedDiv = null;
 var picker = new Pikaday(
 {
     field: document.getElementById('custom'),
-    format: 'MM/DD/YYYY',
+    format: 'YYYY-MM-DD',
     minDate: moment("2000-01-01").toDate(),
     maxDate: moment().subtract(1, 'days').toDate()
 });
@@ -157,7 +157,8 @@ function getData() {
     var userSelection = document.querySelector('input[name="startdate"]:checked').id;
     switch (userSelection) {
         case 'other':
-            alert(document.getElementById('custom').value);
+            var d = moment(document.getElementById('custom').value).isValid();
+            alert(d);
             break;
         default:
             alert(userSelection);
