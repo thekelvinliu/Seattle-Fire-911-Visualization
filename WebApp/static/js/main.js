@@ -154,14 +154,30 @@ function clearMarkers() {
 
 //retrieve fresh data from seattle open data using user-supplied start date (default is yesterday)
 function getData() {
+    //clear the previous markers
+    clearMarkers();
     var userSelection = document.querySelector('input[name="startdate"]:checked').id;
+    var startDate;
     switch (userSelection) {
         case 'other':
-            var d = moment(document.getElementById('custom').value).isValid();
-            alert(d);
+            //bad input send an alert
+            startDate = moment(document.getElementById('custom').value);
+            if (!startDate.isValid()) {
+                alert("Enter a date with the format 'YYYY-MM-DD");
+                return;
+            }
             break;
+        //last week
+        case 'lastweek':
+            startDate = moment().subtract(1, 'weeks');
+            break;
+        //three days ago
+        case '3daysago':
+            startDate = moment().subtract(3, 'days');
+            break;
+        //use yesterday setting as default
         default:
-            alert(userSelection);
+            startDate = moment().subtract(1, 'days');
     }
 }
 
