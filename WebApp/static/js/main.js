@@ -1,9 +1,6 @@
 // main.js - sets up the visualization's map and other useful functions
 
 // GLOBALS
-var baseURL = 'https://data.seattle.gov/resource/grwu-wqtk.json?$order=datetime+ASC';
-var dtFormatString = 'YYYY-MM-DDTHH:mm:ss.SSS'
-var lastUpdate;
 var map;
 var markers = [];
 var openWindow = null;
@@ -15,6 +12,11 @@ var picker = new Pikaday(
     minDate: moment("2010-06-01").toDate(),
     maxDate: moment().subtract(1, 'days').toDate()
 });
+var baseURL = 'https://data.seattle.gov/resource/grwu-wqtk.json?$order=datetime+ASC&$limit=100000';
+var dtFormatString = 'YYYY-MM-DDTHH:mm:ss.SSS'
+var lastUpdate;
+var newData = [];
+var uids = {};
 
 // FUNCTIONS
 //insert a newNode after targetNode as a sibling -- thanks stackoverflow
@@ -184,8 +186,33 @@ function getData() {
     }
     //set latest update to now
     var lastUpdate = moment().tz("US/Pacific");
-    var url =[baseURL, `$where=datetime+between+'${startDate.format(dtFormatString)}'+and+'${lastUpdate.format(dtFormatString)}'`].join('&');
+    var url = [baseURL, `$where=datetime+between+'${startDate.format(dtFormatString)}'+and+'${lastUpdate.format(dtFormatString)}'`].join('&');
+    httpGET(url);
+    if (newData.length > 0) {
+        console.log("yes");
+        //set number of incidents
+        document.getElementById('incidents').innerHTML = newData.length;
+        //drop the markers!
+        drop(newData);
+    } else {
+        console.log("no");
+    }
+}
+
+//send an http GET request with the supplied url
+function httpGET(url) {
     console.log(url);
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function() {
+        //clear previous newData
+        while (newData.length > 0) {
+            newData.pop();
+        }
+        if (xhr.readyState !== 4 || xhr.status !== 200) return;
+        newData = JSON.parse(xhr.responseText);
+    }
+    xhr.send();
 }
 
 // MAIN
@@ -195,19 +222,18 @@ initMap();
 drop(data);
 //send get request to retrieve new data on an interval
 //interval at 2 mins
-var newData = [];
-setInterval(function() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/refresh', true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4 || xhr.status != 200) return;
-        newData = JSON.parse(xhr.responseText);
-    };
-    xhr.send();
-    if (newData.length > 0) {
-        drop(newData);
-    } else {
-        console.log('No new data to drop');
-    }
-}, 1000*60*2);
+// setInterval(function() {
+//     var xhr = new XMLHttpRequest();
+//     xhr.open('GET', '/refresh', true);
+//     xhr.onreadystatechange = function() {
+//         if (xhr.readyState != 4 || xhr.status != 200) return;
+//         newData = JSON.parse(xhr.responseText);
+//     };
+//     xhr.send();
+//     if (newData.length > 0) {
+//         drop(newData);
+//     } else {
+//         console.log('No new data to drop');
+//     }
+// }, 1000*60*2);
 
