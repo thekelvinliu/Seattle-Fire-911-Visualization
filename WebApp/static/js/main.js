@@ -1,6 +1,8 @@
 // main.js - sets up the visualization's map and other useful functions
 
 // GLOBALS
+var baseURL = 'https://data.seattle.gov/resource/grwu-wqtk.json?$order=datetime+ASC';
+var dtFormatString = 'YYYY-MM-DDTHH:mm:ss.SSS'
 var lastUpdate;
 var map;
 var markers = [];
@@ -10,7 +12,7 @@ var picker = new Pikaday(
 {
     field: document.getElementById('custom'),
     format: 'YYYY-MM-DD',
-    minDate: moment("2000-01-01").toDate(),
+    minDate: moment("2010-06-01").toDate(),
     maxDate: moment().subtract(1, 'days').toDate()
 });
 
@@ -157,28 +159,33 @@ function getData() {
     //clear the previous markers
     clearMarkers();
     var userSelection = document.querySelector('input[name="startdate"]:checked').id;
-    var startDate;
+    //get starttime as a moment object
+    var startDate = moment().tz("US/Pacific");
     switch (userSelection) {
         case 'other':
-            //bad input send an alert
             startDate = moment(document.getElementById('custom').value);
+            //alert user if input is bad
             if (!startDate.isValid()) {
-                alert("Enter a date with the format 'YYYY-MM-DD");
+                alert("Enter a date with the format 'YYYY-MM-DD'");
                 return;
             }
             break;
         //last week
         case 'lastweek':
-            startDate = moment().subtract(1, 'weeks');
+            startDate = startDate.subtract(1, 'weeks');
             break;
         //three days ago
         case '3daysago':
-            startDate = moment().subtract(3, 'days');
+            startDate = startDate.subtract(3, 'days');
             break;
         //use yesterday setting as default
         default:
-            startDate = moment().subtract(1, 'days');
+            startDate = startDate.subtract(1, 'days');
     }
+    //set latest update to now
+    var lastUpdate = moment().tz("US/Pacific");
+    var url =[baseURL, `$where=datetime+between+'${startDate.format(dtFormatString)}'+and+'${lastUpdate.format(dtFormatString)}'`].join('&');
+    console.log(url);
 }
 
 // MAIN
