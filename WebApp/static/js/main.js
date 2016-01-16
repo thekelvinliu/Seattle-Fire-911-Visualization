@@ -1,10 +1,17 @@
 // main.js - sets up the visualization's map and other useful functions
 
 // GLOBALS
+//user interface
 var map;
 var markers = [];
+var divs = [];
 var openWindow = null;
 var selectedDiv = null;
+//data structures
+var allData = [];
+var newData = [];
+var uids = {};
+//smaller stuff
 var picker = new Pikaday(
 {
     field: document.getElementById('custom'),
@@ -14,9 +21,8 @@ var picker = new Pikaday(
 });
 var baseURL = 'https://data.seattle.gov/resource/grwu-wqtk.json?$order=datetime+ASC&$limit=100000';
 var dtFormatString = 'YYYY-MM-DDTHH:mm:ss.SSS'
-var lastUpdate;
-var newData = [];
-var uids = {};
+var startDT, stopDT, lastUpdate;
+var to;
 
 // FUNCTIONS
 //insert a newNode after targetNode as a sibling -- thanks stackoverflow
@@ -41,13 +47,13 @@ function initMap() {
 //put data points in arr on the map
 function drop(arr) {
     for (var i = 0; i < arr.length; i++) {
-        addMarkerWithTimeout(arr[i], i*250);
+        addMarkerWithTimeout(arr[i], i*5);
     }
 }
 
 //add marker onto map with delay
 function addMarkerWithTimeout(obj, timeout) {
-    window.setTimeout(function() {
+    to = window.setTimeout(function() {
         // DATA PROCESSING
         //get time and day info
         var time = obj.datetime.slice(11, 16);
@@ -87,8 +93,6 @@ function addMarkerWithTimeout(obj, timeout) {
             map: map,
             animation: google.maps.Animation.DROP
         });
-        //add marker to array
-        markers.push(m);
         //add info div to sidebar
         var rowDiv = document.createElement('div');
         rowDiv.id = obj.incident_number;
@@ -112,6 +116,9 @@ function addMarkerWithTimeout(obj, timeout) {
         descDiv.innerHTML += '<p>' + obj.incident_number + '<br>' + obj.type + '</p>';
         rowDiv.appendChild(descDiv);
         insertAfter(rowDiv, document.getElementById('top'));
+        //add marker and div to respective arrays
+        markers.push(m);
+        divs.push(rowDiv);
 
         // EVENT LISTENERS
         //closing an info window sets openWindow and selectedDiv to null
@@ -147,93 +154,133 @@ function addMarkerWithTimeout(obj, timeout) {
     }, timeout);
 }
 
-//remove all markers from map
-function clearMarkers() {
-    while (markers.length > 0) {
-        markers.pop().setMap(null);
-    }
+//resets interface to have nothing in sidebar and an empty map
+function resetInterface() {
+    //remove incidents
+    document.getElementById('incidents').innerHTML = "";
+    //identifiers
     openWindow = null;
     selectedDiv = null;
+    //clear arrays
+    while (markers.length > 0)
+        markers.pop().setMap(null);
+    while (divs.length > 0) {
+        var d = divs.pop();
+        d.parentNode.removeChild(d);
+    }
 }
 
 //retrieve fresh data from seattle open data using user-supplied start date (default is yesterday)
 function getData() {
-    //clear the previous markers
-    clearMarkers();
+    //reset map
+    resetInterface();
     var userSelection = document.querySelector('input[name="startdate"]:checked').id;
     //get starttime as a moment object
-    var startDate = moment().tz("US/Pacific");
+    startDT = moment().tz("US/Pacific");
     switch (userSelection) {
         case 'other':
-            startDate = moment(document.getElementById('custom').value);
+            startDT = moment(document.getElementById('custom').value);
             //alert user if input is bad
-            if (!startDate.isValid()) {
+            if (!startDT.isValid()) {
                 alert("Enter a date with the format 'YYYY-MM-DD'");
                 return;
             }
             break;
         //last week
         case 'lastweek':
-            startDate = startDate.subtract(1, 'weeks');
+            startDT = startDT.subtract(1, 'weeks');
             break;
         //three days ago
         case '3daysago':
-            startDate = startDate.subtract(3, 'days');
+            startDT = startDT.subtract(3, 'days');
             break;
         //use yesterday setting as default
         default:
-            startDate = startDate.subtract(1, 'days');
+            startDT = startDT.subtract(1, 'days');
     }
     //set latest update to now
-    var lastUpdate = moment().tz("US/Pacific");
-    var url = [baseURL, `$where=datetime+between+'${startDate.format(dtFormatString)}'+and+'${lastUpdate.format(dtFormatString)}'`].join('&');
-    httpGET(url);
-    if (newData.length > 0) {
-        console.log("yes");
-        //set number of incidents
-        document.getElementById('incidents').innerHTML = newData.length;
-        //drop the markers!
-        drop(newData);
-    } else {
-        console.log("no");
+    stopDT = moment().tz("US/Pacific");
+    httpGET(createURL(), getNewData);
+}
+
+//returns a url to hit based on startDT and stopDT
+function createURL() {
+    return [baseURL, `$where=datetime+between+'${startDT.format(dtFormatString)}'+and+'${stopDT.format(dtFormatString)}'`].join('&');
+}
+
+//recreates allData array with new data
+function getNewData(data) {
+    //ensure allData and uids are empty
+    while (allData.length > 0)
+        allData.pop();
+    for (var p in uids)
+        if (uids.hasOwnProperty(p))
+            delete uids[p];
+    //change number of incidents
+    document.getElementById('incidents').innerHTML = data.length;
+    //iterate over datapoints
+    for (var i = 0; i < data.length; i++) {
+        //add uid
+        uids[data[i].incident_number] = true;
+        //add datapoint
+        allData.push(data[i]);
     }
+    //drop the data to reflect changes
+    drop(allData);
+}
+
+//adds additional data to existing allData array
+function addNewData(data) {
+    //ensure newData is empty
+    while (newData.length > 0)
+        newData.pop();
+    //number of incidents
+    var incidents = document.getElementById('incidents');
+    var n = parseInt(incidents.innerHTML);
+    //iterate over new datapoints
+    for (var i = 0; i < data.length; i++) {
+        //add data point if the incident number is not in uids
+        if (!uids.hasOwnProperty(data[i].incident_number)) {
+            //add to uids
+            uids[data[i].incident_number] = true;
+            //add to newData
+            newData.push(data[i]);
+            //increment incidents
+            n++;
+        }
+    }
+    //change number of incidents and drop any new data
+    incidents.innerHTML = n;
+    drop(newData);
+    //save stopDT if there actually was data
+    if (data.length > 0)
+        lastUpdate = stopDT;
 }
 
 //send an http GET request with the supplied url
-function httpGET(url) {
-    console.log(url);
+//executes callback with the response text as an arguement
+function httpGET(url, callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
     xhr.onreadystatechange = function() {
-        //clear previous newData
-        while (newData.length > 0) {
-            newData.pop();
-        }
-        if (xhr.readyState !== 4 || xhr.status !== 200) return;
-        newData = JSON.parse(xhr.responseText);
+        if (xhr.readyState === 4 && xhr.status === 200)
+            callback(JSON.parse(xhr.responseText));
     }
+    xhr.open('GET', url, true);
     xhr.send();
 }
 
 // MAIN
 //create the map!
 initMap();
-//drop the markers!
-drop(data);
-//send get request to retrieve new data on an interval
-//interval at 2 mins
-// setInterval(function() {
-//     var xhr = new XMLHttpRequest();
-//     xhr.open('GET', '/refresh', true);
-//     xhr.onreadystatechange = function() {
-//         if (xhr.readyState != 4 || xhr.status != 200) return;
-//         newData = JSON.parse(xhr.responseText);
-//     };
-//     xhr.send();
-//     if (newData.length > 0) {
-//         drop(newData);
-//     } else {
-//         console.log('No new data to drop');
-//     }
-// }, 1000*60*2);
+//auto load data from yesterday
+getData();
+//load more data every 5 mins
+setInterval(function() {
+    console.log('looking for update...');
+    //start from the latest update
+    startDT = lastUpdate;
+    //stop at now
+    stopDT = moment().tz("US/Pacific");
+    httpGET(createURL(), addNewData);
+}, 1000*60*5);
 
