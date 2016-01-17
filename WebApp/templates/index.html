@@ -26,14 +26,14 @@
       <h2 class="centered">Seattle Fire 911 Visualization</h2>
       <div class="row" id="controls">
         <div class="half-size left" id="summ">
-          <span id="incidents"></span>
+          <span id="incidents">0</span>
           <br>incidents since
         </div>
         <div class="half-size right" id="options">
-          <input type="radio" name="startdate" id="yesterday" checked> yesterday<br>
-          <input type="radio" name="startdate" id="3daysago"> 3 days ago<br>
-          <input type="radio" name="startdate" id="lastweek"> last week<br>
-          <input type="radio" name="startdate" id="other"> <input type="text" id="custom" value="YYYY-MM-DD">
+          <input type="radio" name="startdate" id="hour"> <input type="text" class="short" id="custom-hour" placeholder="12"> hour(s) ago<br>
+          <input type="radio" name="startdate" id="day"> <input type="text" class="short" id="custom-day" placeholder="01"> day(s) ago<br>
+          <input type="radio" name="startdate" id="week"> <input type="text" class="short" id="custom-week" placeholder="02"> week(s) ago<br>
+          <input type="radio" name="startdate" id="other"> <input type="text" id="custom-other" placeholder="YYYY-MM-DD">
         </div>
         <div class="centered row">
           <button id="visualize" onclick="getData()">visualize</button>

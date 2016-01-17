@@ -177,22 +177,43 @@ function getData() {
     var userSelection = document.querySelector('input[name="startdate"]:checked').id;
     //get starttime as a moment object
     startDT = moment().tz("US/Pacific");
+    //hold user input
+    var x;
     switch (userSelection) {
+        case 'hour':
+            x = validateInteger(document.getElementById('custom-hour').value);
+            //alert on invalid input
+            if (x === -1) {
+                alert("Enter a positive integer for hours!");
+                return;
+            }
+            startDT.subtract(x, 'hours');
+            break;
+        case 'day':
+            x = validateInteger(document.getElementById('custom-day').value);
+            //alert on invalid input
+            if (x === -1) {
+                alert("Enter a positive integer for days!");
+                return;
+            }
+            startDT.subtract(x, 'days');
+            break;
+        case 'week':
+            x = validateInteger(document.getElementById('custom-week').value);
+            //alert on invalid input
+            if (x === -1) {
+                alert("Enter a positive integer for weeks!");
+                return;
+            }
+            startDT.subtract(x, 'weeks');
+            break;
         case 'other':
-            startDT = moment(document.getElementById('custom').value);
+            startDT = moment(document.getElementById('custom-other').value);
             //alert user if input is bad
             if (!startDT.isValid()) {
                 alert("Enter a date with the format 'YYYY-MM-DD'");
                 return;
             }
-            break;
-        //last week
-        case 'lastweek':
-            startDT = startDT.subtract(1, 'weeks');
-            break;
-        //three days ago
-        case '3daysago':
-            startDT = startDT.subtract(3, 'days');
             break;
         //use yesterday setting as default
         default:
@@ -227,6 +248,12 @@ function getNewData(data) {
     }
     //drop the data to reflect changes
     drop(allData);
+}
+
+//return a positive integer from a string or -1
+function validateInteger(s) {
+    var x = parseInt(s);
+    return (!isNaN(x) && x > 0) ? x : -1;
 }
 
 //adds additional data to existing allData array
