@@ -11,19 +11,34 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/fire.png') }}">
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Raleway:400,300,600">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/pikaday/1.4.0/css/pikaday.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     <!-- JS -->
-    <script type="text/javascript">
-      var last_updated = '{{ lu }}';
-      var data = {{ d|tojson }};
-    </script>
-    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyDM_DiCCOBmfzR9htAwJlFUuB16kTI8mJs" defer></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyDM_DiCCOBmfzR9htAwJlFUuB16kTI8mJs" defer></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.1/moment.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.0/moment-timezone-with-data.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/pikaday/1.4.0/pikaday.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
   </head>
   <body>
-    <div id="map"></div>
-    <div id="info">
-      <h3 class="centered">Seattle Fire 911 Visualization</h3>
+    <div class="right" id="map"></div>
+    <div class="left" id="info">
+      <h2 class="centered">Seattle Fire 911 Visualization</h2>
+      <div class="row" id="controls">
+        <div class="half-size left" id="summ">
+          <span id="incidents">hi</span>
+          <br>incidents since
+        </div>
+        <div class="half-size right" id="options">
+          <input type="radio" name="startdate" id="hour"> <input type="text" class="short" id="custom-hour" placeholder="12"> hour(s) ago<br>
+          <input type="radio" name="startdate" id="day" checked> <input type="text" class="short" id="custom-day" placeholder="01" value="01"> day(s) ago<br>
+          <input type="radio" name="startdate" id="week"> <input type="text" class="short" id="custom-week" placeholder="02"> week(s) ago<br>
+          <input type="radio" name="startdate" id="other"> <input type="text" id="custom-other" placeholder="YYYY-MM-DD">
+        </div>
+        <div class="centered row">
+          <button id="visualize" onclick="getData()">visualize</button>
+        </div>
+      </div>
       <div id="top" class="row"></div>
     </div>
   </body>
