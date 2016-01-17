@@ -47,7 +47,7 @@ function initMap() {
 //put data points in arr on the map
 function drop(arr) {
     for (var i = 0; i < arr.length; i++) {
-        addMarkerWithTimeout(arr[i], i*5);
+        addMarkerWithTimeout(arr[i], i*50);
     }
 }
 
@@ -157,7 +157,7 @@ function addMarkerWithTimeout(obj, timeout) {
 //resets interface to have nothing in sidebar and an empty map
 function resetInterface() {
     //remove incidents
-    document.getElementById('incidents').innerHTML = "";
+    document.getElementById('incidents').innerHTML = "0";
     //identifiers
     openWindow = null;
     selectedDiv = null;
