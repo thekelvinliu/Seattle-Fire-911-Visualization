@@ -14,7 +14,7 @@ var uids = {};
 //smaller stuff
 var picker = new Pikaday(
 {
-    field: document.getElementById('custom'),
+    field: document.getElementById('custom-other'),
     format: 'YYYY-MM-DD',
     minDate: moment("2010-06-01").toDate(),
     maxDate: moment().subtract(1, 'days').toDate()
