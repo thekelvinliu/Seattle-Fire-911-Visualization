@@ -69,15 +69,15 @@ function addMarkerWithTimeout(obj, timeout) {
             '</div>'
         //select which image to use based on obj.type
         //defualt is fire.png
-        var imgPath;
+        var imgPath = window.location.href;
         if (obj.type.startsWith('Medic')) {
-            imgPath = '/static/img/ambulance.png';
+            imgPath = 'static/img/ambulance.png';
         } else if (obj.type.startsWith('Aid')) {
-            imgPath = '/static/img/helmetcross.png';
+            imgPath = 'static/img/helmetcross.png';
         } else if (obj.type.startsWith('Rescue') || obj.type.startsWith('Alarm')) {
-            imgPath = '/static/img/firetruck.png';
+            imgPath = 'static/img/firetruck.png';
         } else {
-            imgPath = '/static/img/fire.png';
+            imgPath = 'static/img/fire.png';
         }
 
         // CREATE OBJECTS/NODES
